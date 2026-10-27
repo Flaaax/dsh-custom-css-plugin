@@ -9,7 +9,7 @@ import { CustomStyleService, type RuntimeConfig } from './service.ts'
 import { StyleStore } from './style-store.ts'
 
 export const name = 'minimal-custom-style'
-export const inject = ['commands', 'connection', 'settings']
+export const inject = ['commands', 'settings']
 
 export interface Config extends RuntimeConfig {
   readonly enabled: Volatile<boolean>
@@ -36,6 +36,12 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   const service = new CustomStyleService(ctx, config, store)
   ctx.effect(() => ctx.settings.configure({ auto: false }, ctx.fiber), 'minimal-custom-style: settings presentation')
   ctx.effect(() => registerCommands(ctx, service), 'minimal-custom-style: command')
-  ctx.effect(() => registerRpc(ctx, service), 'minimal-custom-style: authenticated RPC')
+  // Connection 由 Web Client 平面在运行期提供，不能作为 Host 插件的静态依赖；
+  // 否则插件会因等待 connection 服务而无法激活。这里用动态注入并在缺失时降级。
+  ctx.inject(['connection'], (scope) => {
+    const connection = scope.root.get('connection')
+    if (connection === undefined) return
+    scope.effect(() => registerRpc(connection, service), 'minimal-custom-style: authenticated RPC')
+  })
   ctx.logger.info('minimal-custom-style: CSS 文件 %s', store.path)
 }

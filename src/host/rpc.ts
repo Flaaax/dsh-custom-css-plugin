@@ -1,5 +1,4 @@
-import type {} from '@deepseek-ai/dsh-client-connection'
-import type { Context } from '@deepseek-ai/cordis'
+import type { HostConnectionHandle } from '@deepseek-ai/dsh-client-connection'
 import { RPC_CHANNEL, type RpcFailure } from '../shared/protocol.ts'
 import { StyleError, describeError } from './errors.ts'
 import type { CustomStyleService } from './service.ts'
@@ -20,8 +19,8 @@ function objectPayload(payload: unknown): Record<string, unknown> | undefined {
     : undefined
 }
 
-export function registerRpc(ctx: Context, service: CustomStyleService): () => Promise<void> {
-  return ctx.connection.rpc.handle(RPC_CHANNEL, async (endpoint, payload) => {
+export function registerRpc(connection: HostConnectionHandle, service: CustomStyleService): () => Promise<void> {
+  return connection.rpc.handle(RPC_CHANNEL, async (endpoint, payload) => {
     try {
       if (endpoint === 'read') return { ok: true, value: await service.read() }
       if (endpoint === 'reload') return { ok: true, value: await service.reload() }
