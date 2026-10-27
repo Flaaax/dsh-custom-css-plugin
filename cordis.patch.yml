@@ -1,0 +1,5 @@
+# 一个稳定 row 同时挂载 Host 与清单声明的 Client 半身。
+- insert:
+    - id: minimal-custom-style
+      name: 'dsh-minimal-custom-style-plugin'
+      config: {}
