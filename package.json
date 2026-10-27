@@ -2,6 +2,7 @@
   "name": "dsh-minimal-custom-style-plugin",
   "version": "0.1.0",
   "description": "DeepSeek Harness Desktop 专用的轻量自定义 CSS 插件",
+  "icon": "./icon.svg",
   "type": "module",
   "main": "./lib/index.mjs",
   "types": "./lib/types/host/index.d.ts",
@@ -14,7 +15,8 @@
       "types": "./lib/types/client/index.d.ts",
       "default": "./lib/client.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
   },
   "files": [
     "lib/index.mjs",
@@ -23,6 +25,8 @@
     "lib/client.js.map",
     "lib/types/**/*.d.ts",
     "cordis.patch.yml",
+    "icon.svg",
+    "locale/*.json",
     "README.md",
     "LICENSE",
     "docs/architecture.md",

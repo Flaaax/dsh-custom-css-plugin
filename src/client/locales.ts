@@ -1,6 +1,6 @@
 export const zh = {
   nav: '自定义样式',
-  title: 'DSH Minimal Custom Style',
+  title: 'Custom CSS',
   enable: '启用自定义 CSS',
   path: 'CSS 文件',
   editor: 'CSS 编辑器',
@@ -19,7 +19,7 @@ export const zh = {
 
 export const en: Record<keyof typeof zh, string> = {
   nav: 'Custom Style',
-  title: 'DSH Minimal Custom Style',
+  title: 'Custom CSS',
   enable: 'Enable custom CSS',
   path: 'CSS file',
   editor: 'CSS editor',
