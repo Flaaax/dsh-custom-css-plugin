@@ -25,6 +25,9 @@
     "cordis.patch.yml",
     "README.md",
     "LICENSE",
+    "docs/architecture.md",
+    "docs/feasibility.md",
+    "docs/references.md",
     "docs/security.md",
     "docs/verification.md",
     "docs/roadmap.md"
