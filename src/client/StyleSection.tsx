@@ -1,4 +1,4 @@
-import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import type { InjectFace, Translate } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
 import type { ClientState, StyleController } from './state.ts'
 import type { LocaleKey } from './locales.ts'
@@ -6,18 +6,30 @@ import type { LocaleKey } from './locales.ts'
 export interface StyleSectionInjected {
   hooks: { styleState: ObservableSnapshot<ClientState> }
   controller: Pick<StyleController, 'setDraft' | 'save' | 'reload' | 'reset' | 'setEnabled'>
+  t: Translate<LocaleKey>
 }
 
-type Props = PropsRuntime<'settings.section'> & PropsLocale<'settings.minimalCustomStyle'> & InjectFace<StyleSectionInjected>
+/** `plugins.bundle.config` 由插件页注入的视图选择。 */
+interface PluginConfigViewProps {
+  readonly view: 'summary' | 'page'
+}
+
+type Props = PluginConfigViewProps & InjectFace<StyleSectionInjected>
 
 const sectionStyle = { display: 'flex', flexDirection: 'column', gap: 14, padding: '4px 2px 24px' } as const
 const rowStyle = { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' } as const
 const labelStyle = { fontWeight: 600 } as const
 const buttonStyle = { padding: '7px 12px', borderRadius: 8, border: '1px solid currentColor', cursor: 'pointer' } as const
 
-export function StyleSection({ useStyleState, controller, t }: Props) {
+export function StyleSection({ view, useStyleState, controller, t }: Props) {
   const state = useStyleState(value => value)
   const snapshot = state.snapshot
+  if (view === 'summary') {
+    const summary = snapshot === undefined
+      ? t('title')
+      : `${snapshot.enabled ? t('enabledState') : t('disabledState')} · ${snapshot.bytes} ${t('bytes')}`
+    return <span style={{ opacity: 0.8 }}>{summary}</span>
+  }
   const confirmReload = (): void => {
     if (!state.dirty || globalThis.confirm(t('reloadConfirm'))) void controller.reload(true)
   }
@@ -60,5 +72,13 @@ export function StyleSection({ useStyleState, controller, t }: Props) {
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     'settings.minimalCustomStyle': LocaleKey
+  }
+  interface SlotMap {
+    'plugins.bundle.config': {
+      kind: 'keyed'
+      scope: 'root'
+      owner: { readonly view: 'summary' | 'page' }
+      keyProps: Record<string, object>
+    }
   }
 }

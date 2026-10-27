@@ -13,6 +13,8 @@ export const zh = {
   resetConfirm: '确定把 CSS 文件重置为空白安全模板吗？此操作会覆盖当前文件。',
   bytes: '字节',
   revision: 'revision',
+  enabledState: '已启用',
+  disabledState: '已禁用',
 } as const
 
 export const en: Record<keyof typeof zh, string> = {
@@ -30,6 +32,8 @@ export const en: Record<keyof typeof zh, string> = {
   resetConfirm: 'Reset the CSS file to the blank safety template? This overwrites the current file.',
   bytes: 'bytes',
   revision: 'revision',
+  enabledState: 'Enabled',
+  disabledState: 'Disabled',
 }
 
 export type LocaleKey = keyof typeof zh

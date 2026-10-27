@@ -8,6 +8,7 @@ import { StyleSection, type StyleSectionInjected } from './StyleSection.tsx'
 import { en, zh } from './locales.ts'
 import { StyleController } from './state.ts'
 import { StyleOwner } from './style-owner.ts'
+import { PACKAGE_ID } from '../shared/protocol.ts'
 
 export const name = 'minimal-custom-style-client'
 export const inject = ['slots', 'locale', 'connection', 'remote']
@@ -28,13 +29,13 @@ export function apply(ctx: Context): void {
   const injectFace = (): StyleSectionInjected => ({
     hooks: { styleState: controller.state },
     controller,
+    t,
   })
-  ctx.slots.inject('settings.section', () => ctx.slots.register({
-    name: 'settings.section',
-    id: 'minimal-custom-style',
-    order: 70,
-    label: () => t('nav'),
-    locale,
+  // 配置渲染在插件页（bundle 详情页）顶层，而不是 Settings 页的组件区。
+  // `plugins.bundle.config` 以包名为键。
+  ctx.slots.inject('plugins.bundle.config', () => ctx.slots.register({
+    name: 'plugins.bundle.config',
+    key: PACKAGE_ID,
     inject: injectFace,
   }, StyleSection))
 }
