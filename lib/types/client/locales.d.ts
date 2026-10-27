@@ -1,0 +1,20 @@
+export declare const zh: {
+    readonly nav: "自定义样式";
+    readonly title: "Custom CSS";
+    readonly enable: "启用自定义 CSS";
+    readonly path: "CSS 文件";
+    readonly editor: "CSS 编辑器";
+    readonly apply: "应用";
+    readonly reload: "重新载入文件";
+    readonly reset: "重置为空白模板";
+    readonly warning: "只粘贴你自己编写或已经审计过的 CSS。CSS 可以隐藏或伪造界面，也可能通过 url() / @import 请求外部资源。";
+    readonly dirty: "有未保存草稿";
+    readonly reloadConfirm: "重新载入会丢弃当前未保存草稿，是否继续？";
+    readonly resetConfirm: "确定把 CSS 文件重置为空白安全模板吗？此操作会覆盖当前文件。";
+    readonly bytes: "字节";
+    readonly revision: "revision";
+    readonly enabledState: "已启用";
+    readonly disabledState: "已禁用";
+};
+export declare const en: Record<keyof typeof zh, string>;
+export type LocaleKey = keyof typeof zh;

@@ -28,6 +28,7 @@
     "icon.svg",
     "locale/*.json",
     "README.md",
+    "README.zh.md",
     "LICENSE",
     "docs/architecture.md",
     "docs/feasibility.md",
@@ -71,6 +72,7 @@
     }
   },
   "license": "MIT",
+  "author": "Flaaax",
   "dependencies": {
     "@deepseek-ai/dsh-atomic-write": "0.2.1-rc.3",
     "@deepseek-ai/schemastery": "~3.18.5"

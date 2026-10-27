@@ -1,48 +1,36 @@
-# DSH Minimal Custom Style
+# Custom CSS
 
-为 DeepSeek Harness Desktop 提供最小化的自定义 CSS 编辑、持久化和启停能力。插件面向 DSH `0.2.1-rc.3`，当前版本为 `0.1.0`。
+A minimal, auditable custom CSS plugin for the DeepSeek Harness **Desktop** UI. Edit, save, reload, reset, and toggle custom CSS from the Desktop settings page. Built for DSH `0.2.1-rc.3` (current release `0.1.0`).
 
-> 自定义 CSS 可以隐藏、遮挡或伪造界面，`url()` / `@import` 还可能发起网络请求。只使用你自己编写或已经审计的 CSS。
+> **Security:** custom CSS can hide, mask, or spoof the interface, and `url()` / `@import` may trigger network requests. Only use CSS you wrote yourself or have already audited.
 
-## 功能
+## Install
 
-- 在 Desktop 设置页编辑、保存、重新载入、重置和启停 CSS。
-- 将内容固定保存到 `$DSH_HOME/dsh-minimal-custom-style/custom.css`；默认 DSH Home 下通常是 `%USERPROFILE%\.dsh\dsh-minimal-custom-style\custom.css`。
-- 使用原子写入、256 KiB 上限、严格 UTF-8 校验和 SHA-256 revision 冲突保护。
-- 提供 `/custom-style status|enable|disable|reload|reset confirm` 命令。
-- 禁用或卸载插件时保留 CSS 文件。
-
-项目内置 CSS 预设已列入后续 TODO，第一版不实现。未来预设仍会写入同一个 `custom.css`，不会成为第二套持久数据。
-
-## 构建
-
-需要 Node.js `22.19.0` 以上的兼容版本，以及 pnpm。
+Install the published release from GitHub:
 
 ```powershell
-pnpm install --frozen-lockfile
-pnpm run verify
-npm pack
+dsh plugin --profile desktop add "https://github.com/Flaaax/dsh-custom-css-plugin.git#v0.1.0"
 ```
 
-`verify` 会执行类型检查、Host/Client 构建、测试和发布清单预检。
+Restart the Desktop app afterwards. A "Custom CSS" section then appears in the settings page.
 
-## 安装与更新
+> This plugin declares the Desktop Web Client plane only. It is not a standalone Web/Headless product feature.
 
-先构建并生成 `.tgz`，再由用户在完全退出 Desktop 后执行：
+## Features
 
-```powershell
-dsh plugin --profile desktop add "E:\绝对路径\dsh-minimal-custom-style-plugin-0.1.0.tgz"
-```
+- Edit, save, reload, reset, and enable/disable CSS from the Desktop settings page.
+- Persist CSS to `$DSH_HOME/dsh-minimal-custom-style/custom.css` (with the default DSH Home, usually `%USERPROFILE%\.dsh\dsh-minimal-custom-style\custom.css`).
+- Atomic writes, a 256 KiB size cap, strict UTF-8 validation, and SHA-256 revision conflict protection.
+- `/custom-style status|enable|disable|reload|reset confirm` commands.
+- The CSS file is preserved when the plugin is disabled or removed.
 
-重新启动 Desktop 后，在设置页找到“自定义 CSS”。更新到新包时重复 `add` 命令即可。不要把项目源码目录作为长期 `link:` 安装源；发布 tarball 更接近真实安装结果。
+Built-in CSS presets are tracked as future TODOs and are not part of `0.1.0`. Future presets will still write to the same `custom.css` instead of introducing a second persistent store.
 
-本插件只声明 Desktop 使用的 Web Client 平面，不支持把它当作普通 Web/Headless 产品功能使用。
+## Usage
 
-## 使用
+In the settings page, "Save & Apply" only applies content the Host has confirmed. If the file is edited externally, saving a stale draft is rejected by the revision check; use "Reload" and merge manually.
 
-设置页中的“保存并应用”只应用 Host 已确认写入的内容。文件若被外部编辑，旧草稿保存会被 revision 检查拒绝；使用“重新载入”后手工合并。
-
-交互命令：
+Commands:
 
 ```text
 /custom-style status
@@ -52,40 +40,44 @@ dsh plugin --profile desktop add "E:\绝对路径\dsh-minimal-custom-style-plugi
 /custom-style reset confirm
 ```
 
-`reset` 必须显式带 `confirm`，并会把文件替换为安全空白模板。
+`reset` requires an explicit `confirm` and replaces the file with a safe blank template.
 
-## 禁用、恢复与卸载
+## Disable, recover, and uninstall
 
-界面仍可使用时，在设置页关闭开关，或执行 `/custom-style disable`。如果错误 CSS 导致界面不可用，完全退出 Desktop 后从 Profile 移除插件：
+While the UI is still usable, turn the toggle off in the settings page, or run `/custom-style disable`. If bad CSS makes the UI unusable, fully exit the Desktop app and remove the plugin from the profile:
 
 ```powershell
 dsh plugin --profile desktop remove dsh-minimal-custom-style-plugin
 ```
 
-移除不会删除 `custom.css`。修复文件后可重新执行安装命令；也可以先把文件重命名为备份，再安装插件，让插件创建新的空白模板。
-
-默认 DSH Home 的备份示例：
+Removal does not delete `custom.css`. Fix the file and reinstall, or rename it to a backup first so the plugin recreates a fresh blank template. With the default DSH Home:
 
 ```powershell
 $css = Join-Path $env:USERPROFILE '.dsh\dsh-minimal-custom-style\custom.css'
 Copy-Item -LiteralPath $css -Destination "$css.backup" -Force
 ```
 
-恢复时先完全退出 Desktop，再把已审计的备份复制回原路径。若设置了 `DSH_HOME`，请使用该目录下的 `dsh-minimal-custom-style\custom.css`。
+## Build from source
 
-## 验证状态
+Requires a compatible Node.js `22.19.0+` and pnpm.
 
-自动化已覆盖存储安全边界、并发 revision 冲突、RPC 校验、命令适配、Client 样式所有权、卸载竞态和发布清单。打包及隔离 Profile 验证记录见 [docs/verification.md](docs/verification.md)。
+```powershell
+pnpm install --frozen-lockfile
+pnpm run verify
+```
 
-真实 Desktop 设置页、样式效果和重启持久化必须由用户人工验证；本项目不会自动启动、关闭或修改日常 Desktop Profile 来做 UI 测试。
+`verify` runs type checking, Host/Client builds, tests, and a publish-manifest preflight.
 
-更多设计与安全说明：
+## Documentation
 
-- [架构](docs/architecture.md)
-- [安全不变量](docs/security.md)
-- [路线图 / TODO](docs/roadmap.md)
-- [参考与版本钉扎](docs/references.md)
+- [Architecture](docs/architecture.md) (中文)
+- [Security invariants](docs/security.md) (中文)
+- [Verification](docs/verification.md) (中文)
+- [Roadmap / TODO](docs/roadmap.md) (中文)
+- [References and version pinning](docs/references.md) (中文)
 
-## 许可证
+[中文文档](README.zh.md)
 
-[MIT](LICENSE)
+## License
+
+[MIT](LICENSE) © Flaaax
